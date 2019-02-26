@@ -8,7 +8,7 @@ public class LockTable {
     }
     public void acquireLock()
     {
-        ReentrantLock
+        ReentrantLock;
     }
     public void releaseLock()
     {
