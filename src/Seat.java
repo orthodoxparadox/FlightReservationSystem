@@ -1,10 +1,16 @@
+import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class Seat {
     private boolean isOccupied;
     private Flight f;
     private int seatNum;
     private Passenger p;
-
+    ArrayList<Runnable> lockholders;
+    int locktype;
     public Seat(boolean isOccupied, Flight f, int seatNum, Passenger p) {
+        this.lockholders = new ArrayList<Runnable>();
+        this.locktype = 0;
         this.isOccupied = isOccupied;
         this.f = f;
         this.seatNum = seatNum;
