@@ -1,9 +1,8 @@
 public interface Constants {
     int min_capacity = 5;
-    int max_capacity = 10;
-    int num_flights = 10;
-    int num_passengers = 10;
-    int num_queries = 10;
-    int run_type = 1;
-    int sleep_time = 100;
+    int max_capacity = 100;
+    int num_flights = 100;
+    int num_passengers = 100;
+    int num_queries = 1000;
+    int sleep_time = 5;
 }

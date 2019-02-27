@@ -3,10 +3,10 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class Database {
-    static ArrayList<Flight> allFlights = new ArrayList<Flight>();
-    static ArrayList<Passenger> allPassengers = new ArrayList<Passenger>();
+    volatile static ArrayList<Flight> allFlights = new ArrayList<Flight>();
+    volatile static ArrayList<Passenger> allPassengers = new ArrayList<Passenger>();
     public static void initDatabase(int n, int p) {
-        Random r = new Random(System.currentTimeMillis());
+        Random r = new Random(0);
         for(int i = 0; i < p; i++) {
             allPassengers.add(new Passenger(i));
         }

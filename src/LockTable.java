@@ -31,12 +31,19 @@ public class LockTable {
         assert (!table.get(o).get(0).isEmpty());
         assert (o != null);
         assert (table.containsKey(o));
-        while(table.get(o).get(0).get(0) != thread);
+//        while(table.get(o).get(0).get(0) != thread);
         synchronized (o)
         {
             assert (o != null);
             assert (whichLock.containsKey(o));
-            while(whichLock.get(o) ==  2);
+            while(true) {
+                Object tmp = whichLock.get(o);
+                if(tmp != null && ((Integer)tmp == 0 || (Integer)tmp == 1))
+                {
+                    break;
+                }
+            }
+
             whichLock.put(o, 1);
             table.get(o).get(2).add(thread);
             table.get(o).get(0).remove(thread);
@@ -66,11 +73,19 @@ public class LockTable {
         assert (o != null);
         assert (table.containsKey(o));
         while(table.get(o).get(1).get(0) != thread);
+
         synchronized (o)
         {
             assert (o != null);
             assert (whichLock.containsKey(o));
-            while(whichLock.get(o) != 0);
+
+            while(true) {
+                Object tmp = whichLock.get(o);
+                if(tmp != null && (Integer)tmp == 0)
+                {
+                    break;
+                }
+            }
             whichLock.put(o, 2);
             assert(table.get(o).get(2).isEmpty());
             table.get(o).get(2).add(thread);

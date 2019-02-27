@@ -14,8 +14,8 @@ public class Total_Reservations implements Runnable {
                 Flight f = Database.getAllFlights().get(i);
                 sum_reservations += f.occupied;
             }
-            System.out.println("Total sum of reservations is : ");
-            System.out.println(sum_reservations);
+//            System.out.println("Total sum of reservations is : ");
+//            System.out.println(sum_reservations);
             //release lock
             LockTable.releaseExclusiveLock(Database.getAllFlights(), this);
             LockTable.releaseExclusiveLock(Database.getAllPassengers(), this);
@@ -33,8 +33,8 @@ public class Total_Reservations implements Runnable {
                 Flight f = Database.getAllFlights().get(i);
                 LockTable.releaseSharedLock(f, this);
             }
-            System.out.println("Total sum of reservations is : ");
-            System.out.println(sum_reservations);
+//            System.out.println("Total sum of reservations is : ");
+//            System.out.println(sum_reservations);
         }
     }
 }
