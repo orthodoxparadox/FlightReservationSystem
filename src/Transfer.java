@@ -11,6 +11,10 @@ public class Transfer implements Runnable{
 
     @Override
     public void run() {
+        //take lock
+        LockTable.acquireExclusiveLock(Database.allFlights, this);
+        LockTable.acquireExclusiveLock(Database.allPassengers, this);
+
         Passenger p = Database.allPassengers.get(id);
         boolean doesExist = f1.removePassenger(p);
         if(doesExist)
@@ -21,5 +25,9 @@ public class Transfer implements Runnable{
                 f1.addPassenger(p);
             }
         }
+
+        //release lock
+        LockTable.releaseExclusiveLock(Database.allFlights, this);
+        LockTable.releaseExclusiveLock(Database.allPassengers, this);
     }
 }

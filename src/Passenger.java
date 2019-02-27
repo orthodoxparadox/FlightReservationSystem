@@ -6,12 +6,8 @@ public class Passenger {
     int id;
     ArrayList<Seat> mySeats;
     ArrayList<Flight> myFlights;
-    ArrayList<Runnable> lockholders;
-    int locktype;
     public Passenger(int id) {
         this.id = id;
-        this.lockholders = new ArrayList<Runnable>();
-        this.locktype = 0;
         mySeats = new ArrayList<Seat>();
         myFlights = new ArrayList<Flight>();
     }

@@ -6,11 +6,7 @@ public class Flight {
     ArrayList<Seat> seats;
     private int flightno;
     int occupied;
-    ArrayList<Runnable> lockholders;
-    int locktype;
     public Flight(int capacity, int flightno) {
-        this.lockholders = new ArrayList<Runnable>();
-        this.locktype = 0;
         this.capacity = capacity;
         this.seats = new ArrayList<Seat>();
         this.flightno = flightno;
@@ -22,7 +18,7 @@ public class Flight {
     }
 
     public boolean addPassenger(Passenger p) {
-        if(p.check(this))
+        if(p.check(this) || occupied == capacity)
         {
             return false;
         }
@@ -64,6 +60,7 @@ public class Flight {
     }
 
     public boolean removePassenger(Passenger p) {
+        if(occupied == 0) return false;
         if(!p.check(this)) return false;
         for(int i = 0; i < capacity; i++)
         {

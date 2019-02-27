@@ -6,7 +6,15 @@ public class My_Flights implements Runnable{
     }
     public void run()
     {
+        //take lock
+        LockTable.acquireExclusiveLock(Database.allFlights, this);
+        LockTable.acquireExclusiveLock(Database.allPassengers, this);
+
         Passenger p = Database.getPassenger(id);
         p.show_flights();
+
+        //release lock
+        LockTable.releaseExclusiveLock(Database.allFlights, this);
+        LockTable.releaseExclusiveLock(Database.allPassengers, this);
     }
 }

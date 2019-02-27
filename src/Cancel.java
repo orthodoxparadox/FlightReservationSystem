@@ -8,7 +8,15 @@ public class Cancel implements Runnable {
     }
     public void run()
     {
+        //take lock
+        LockTable.acquireExclusiveLock(Database.allFlights, this);
+        LockTable.acquireExclusiveLock(Database.allPassengers, this);
+
         Passenger p = Database.getPassenger(id);
         f.removePassenger(p);
+
+        //release lock
+        LockTable.releaseExclusiveLock(Database.allFlights, this);
+        LockTable.releaseExclusiveLock(Database.allPassengers, this);
     }
 }

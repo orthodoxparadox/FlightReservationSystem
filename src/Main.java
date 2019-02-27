@@ -20,8 +20,6 @@ public class Main {
             int t_type = r.nextInt(5);
             t_type = 0;
             int fl, fl2, pid;
-//            ccm.acquireLock(Database.allFlights);
-//            ccm.acquireLock(Database.allPassengers);
             switch (t_type) {
                 case 0:
                     fl = r.nextInt(n);
@@ -53,8 +51,6 @@ public class Main {
                     exec.execute(transfer);
                     break;
             }
-//            ccm.releaseLock(Database.allFlights);
-//            ccm.releaseLock(Database.allPassengers);
         }
         if(!exec.isTerminated())
         {
