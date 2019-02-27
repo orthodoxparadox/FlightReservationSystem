@@ -6,6 +6,9 @@ public class Flight {
     ArrayList<Seat> seats;
     private int flightno;
     int occupied;
+    LockTable lock;
+    int holders;
+
     public Flight(int capacity, int flightno) {
         this.capacity = capacity;
         this.seats = new ArrayList<Seat>();
@@ -14,7 +17,9 @@ public class Flight {
         {
             seats.add(new Seat(false, this, i + 1, null));
         }
+        this.holders = 0;
         this.occupied = 0;
+        lock = new LockTable();
     }
 
     public boolean addPassenger(Passenger p) {

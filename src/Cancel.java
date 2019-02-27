@@ -9,30 +9,28 @@ public class Cancel implements Runnable {
     public void run() {
         if (Main.run_type == 1) {
             //take lock
-            LockTable.acquireExclusiveLock(Database.getAllFlights(), this);
-            LockTable.acquireExclusiveLock(Database.getAllPassengers(), this);
+            Database.lock.acquireExclusiveLock(this);
 
             Passenger p = Database.getPassenger(id);
             Seat s = f.findPassengerSeat(p);
             if(s != null) s.removePassenger(p);
 
             //release lock
-            LockTable.releaseExclusiveLock(Database.getAllFlights(), this);
-            LockTable.releaseExclusiveLock(Database.getAllPassengers(), this);
+            Database.lock.releaseExclusiveLock(this);
         }
         else
         {
-            LockTable.acquireExclusiveLock(f, this);
+            f.lock.acquireExclusiveLock(this);
             Passenger p = Database.getPassenger(id);
             Seat s = f.findPassengerSeat(p);
             if(s != null) {
-                LockTable.acquireExclusiveLock(s, this);
-                LockTable.acquireExclusiveLock(p, this);
+                s.lock.acquireExclusiveLock(this);
+                p.lock.acquireExclusiveLock(this);
                 s.removePassenger(p);
-                LockTable.releaseExclusiveLock(p, this);
-                LockTable.releaseExclusiveLock(s, this);
+                p.lock.releaseExclusiveLock(this);
+                s.lock.releaseExclusiveLock(this);
             }
-            LockTable.releaseExclusiveLock(f, this);
+            f.lock.releaseExclusiveLock(this);
         }
     }
 }

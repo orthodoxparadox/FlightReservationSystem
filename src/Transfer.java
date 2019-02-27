@@ -13,8 +13,7 @@ public class Transfer implements Runnable {
     public void run() {
         if (Main.run_type == 1) {
             //take lock
-            LockTable.acquireExclusiveLock(Database.getAllFlights(), this);
-            LockTable.acquireExclusiveLock(Database.getAllPassengers(), this);
+            Database.lock.acquireExclusiveLock(this);
 
             Passenger p = Database.getAllPassengers().get(id);
             boolean doesExist = f1.removePassenger(p);
@@ -26,28 +25,27 @@ public class Transfer implements Runnable {
             }
 
             //release lock
-            LockTable.releaseExclusiveLock(Database.getAllFlights(), this);
-            LockTable.releaseExclusiveLock(Database.getAllPassengers(), this);
+            Database.lock.releaseExclusiveLock(this);
         } else {
             Passenger p = Database.getPassenger(id);
-            LockTable.acquireExclusiveLock(f1, this);
+            f1.lock.acquireExclusiveLock(this);
             Seat s1 = f1.findPassengerSeat(p);
             if (s1 != null) {
-                LockTable.acquireExclusiveLock(f2, this);
+                f2.lock.acquireExclusiveLock(this);
                 Seat s2 = f2.getUnoccupiedSeat();
                 if (s2 != null) {
-                    LockTable.acquireExclusiveLock(s1, this);
-                    LockTable.acquireExclusiveLock(s2, this);
-                    LockTable.acquireExclusiveLock(p, this);
+                    s1.lock.acquireExclusiveLock(this);
+                    s2.lock.acquireExclusiveLock(this);
+                    p.lock.acquireExclusiveLock(this);
                     s1.removePassenger(p);
                     s2.addPassenger(p);
-                    LockTable.releaseExclusiveLock(p, this);
-                    LockTable.releaseExclusiveLock(s1, this);
-                    LockTable.releaseExclusiveLock(s2, this);
+                    p.lock.releaseExclusiveLock(this);
+                    s1.lock.releaseExclusiveLock(this);
+                    s2.lock.releaseExclusiveLock(this);
                 }
-                LockTable.releaseExclusiveLock(f2, this);
+                f2.lock.releaseExclusiveLock(this);
             }
-            LockTable.releaseExclusiveLock(f1, this);
+            f1.lock.releaseExclusiveLock(this);
         }
     }
 }

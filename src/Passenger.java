@@ -6,11 +6,17 @@ public class Passenger {
     int id;
     ArrayList<Seat> mySeats;
     ArrayList<Flight> myFlights;
+    LockTable lock;
+    int holders;
+
     public Passenger(int id) {
         this.id = id;
         mySeats = new ArrayList<Seat>();
         myFlights = new ArrayList<Flight>();
+        lock = new LockTable();
+        this.holders = 0;
     }
+
 
     public void add_flight(Flight f, Seat s)
     {

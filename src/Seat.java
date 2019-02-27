@@ -6,11 +6,16 @@ public class Seat {
     private Flight f;
     private int seatNum;
     private Passenger p;
+    LockTable lock;
+    int holders;
+
     public Seat(boolean isOccupied, Flight f, int seatNum, Passenger p) {
         this.isOccupied = isOccupied;
         this.f = f;
         this.seatNum = seatNum;
         this.p = p;
+        this.holders = 0;
+        lock = new LockTable();
     }
 
     public boolean addPassenger(Passenger p){

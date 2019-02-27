@@ -1,110 +1,98 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class LockTable {
-    volatile static HashMap<Object, ArrayList<ArrayList<Runnable>>> table = new HashMap<Object, ArrayList<ArrayList<Runnable>>>();
-    volatile static HashMap<Object, Integer> whichLock = new HashMap<Object, Integer>();
+    static volatile HashMap<LockTable, ArrayList<ArrayList<Runnable>>> table;
+    volatile int holders;
+    volatile int locktype;
+
     public LockTable() {
+        table = new HashMap<LockTable, ArrayList<ArrayList<Runnable>>>();
+        holders = 0;
+        locktype = 0;
     }
-    public static void acquireSharedLock(Object o, Runnable thread)
+
+    public void acquireSharedLock(Runnable thread)
     {
-        synchronized (o){
-            if(table.containsKey(o))
+        synchronized (this){
+            if(table.containsKey(this))
             {
-                table.get(o).get(0).add(thread);
+                table.get(this).get(0).add(thread);
             }
             else
             {
                 ArrayList<Runnable> sList = new ArrayList<Runnable>();
                 ArrayList<Runnable> xList = new ArrayList<Runnable>();
-                ArrayList<Runnable> lockHolders = new ArrayList<Runnable>();
                 ArrayList<ArrayList<Runnable>> R = new ArrayList<ArrayList<Runnable>>();
                 R.add(sList);
                 R.add(xList);
-                R.add(lockHolders);
                 R.get(0).add(thread);
-                whichLock.put(o, 0);
-                table.put(o, R);
+//                whichLock.put(this, 0);
+                locktype = 0;
+                table.put(this, R);
             }
-        }
-        assert (!table.get(o).get(0).isEmpty());
-        assert (o != null);
-        assert (table.containsKey(o));
-//        while(table.get(o).get(0).get(0) != thread);
-        synchronized (o)
-        {
-            assert (o != null);
-            assert (whichLock.containsKey(o));
-            while(true) {
-                Object tmp = whichLock.get(o);
-                if(tmp != null && ((Integer)tmp == 0 || (Integer)tmp == 1))
-                {
-                    break;
-                }
-            }
-
-            whichLock.put(o, 1);
-            table.get(o).get(2).add(thread);
-            table.get(o).get(0).remove(thread);
+//        }
+//        assert (!table.get(this).get(0).isEmpty());
+//        assert (table.containsKey(this));
+//        while(table.get(this).get(0).get(0) != thread);
+//        synchronized (this)
+//        {
+            while(locktype ==  2);
+//            whichLock.put(this, 1);
+            locktype = 1;
+//            table.get(this).get(2).add(thread);
+            holders++;
+            table.get(this).get(0).remove(thread);
         }
     }
-    public static void acquireExclusiveLock(Object o, Runnable thread)
+    public void acquireExclusiveLock(Runnable thread)
     {
-        synchronized (o){
-            if(table.containsKey(o))
+        synchronized (this){
+            if(table.containsKey(this))
             {
-                table.get(o).get(1).add(thread);
+                table.get(this).get(1).add(thread);
             }
             else
             {
                 ArrayList<Runnable> sList = new ArrayList<Runnable>();
                 ArrayList<Runnable> xList = new ArrayList<Runnable>();
-                ArrayList<Runnable> lockHolders = new ArrayList<Runnable>();
                 ArrayList<ArrayList<Runnable>> R = new ArrayList<ArrayList<Runnable>>();
                 R.add(sList);
                 R.add(xList);
-                R.add(lockHolders);
                 R.get(1).add(thread);
-                whichLock.put(o, 0);
-                table.put(o, R);
-            }
-        }
-        assert (o != null);
-        assert (table.containsKey(o));
-        while(table.get(o).get(1).get(0) != thread);
+//                whichLock.put(this, 0);
+                locktype = 0;
+                table.put(this, R);
 
-        synchronized (o)
-        {
-            assert (o != null);
-            assert (whichLock.containsKey(o));
-
-            while(true) {
-                Object tmp = whichLock.get(o);
-                if(tmp != null && (Integer)tmp == 0)
-                {
-                    break;
-                }
             }
-            whichLock.put(o, 2);
-            assert(table.get(o).get(2).isEmpty());
-            table.get(o).get(2).add(thread);
-            table.get(o).get(1).remove(thread);
+//        }
+//        assert (table.containsKey(this));
+//        while(table.get(this).get(1).get(0) != thread);
+//        synchronized (this)
+//        {
+            while(locktype != 0);
+            locktype = 2;
+//            table.get(this).get(2).add(thread);
+            holders++;
+            table.get(this).get(1).remove(thread);
         }
     }
 
-    public static void releaseSharedLock(Object o, Runnable thread)
+    public void releaseSharedLock(Runnable thread)
     {
-        table.get(o).get(2).remove(thread);
-        if(table.get(o).get(2).isEmpty())
-        {
-            whichLock.put(o, 0);
+        holders--;
+//            table.get(this).get(2).remove(thread);
+        if (holders == 0) {
+//                whichLock.put(this, 0);
+            locktype = 0;
         }
     }
 
-    public static void releaseExclusiveLock(Object o, Runnable thread)
+    public void releaseExclusiveLock(Runnable thread)
     {
-        table.get(o).get(2).remove(thread);
-        whichLock.put(o, 0);
+            holders--;
+//            table.get(this).get(2).remove(thread);
+//            whichLock.put(this, 0);
+            locktype = 0;
     }
 }

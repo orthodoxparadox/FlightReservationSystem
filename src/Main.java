@@ -15,7 +15,7 @@ public class Main {
             Scanner sc = new Scanner(System.in);
             System.out.println("ENTER RUN MODE (1 FOR SERIAL, 2 FOR TWO PHASE LOCKING)");
 //        run_type = sc.nextInt();
-            run_type = 1;
+            run_type = 2;
             Database.initDatabase(n, p);
             ExecutorService exec = Executors.newFixedThreadPool(num_threads);
             long t1 = System.currentTimeMillis();
@@ -76,7 +76,9 @@ public class Main {
             }
             if (!exec.isTerminated()) {
                 exec.shutdown();
-                exec.awaitTermination(5L, TimeUnit.SECONDS);
+                while(!exec.awaitTermination(5L, TimeUnit.SECONDS)) {
+
+                }
             }
             long t2 = System.currentTimeMillis();
             System.out.println(num_threads + " " + (double)(t2 - t1)/1000);
