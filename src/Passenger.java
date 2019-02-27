@@ -52,10 +52,17 @@ public class Passenger {
     }
 
     public void show_flights() {
+        if(myFlights.isEmpty())
+        {
+            System.out.println("No flights found");
+            return;
+        }
+        System.out.println("Flights are: ");
         for(int i = 0; i < myFlights.size(); i++)
         {
             Flight f = myFlights.get(i);
-            System.out.println(f.getFlightno());
+            System.out.print(f.getFlightno() + " ");
         }
+        System.out.println();
     }
 }

@@ -1,3 +1,5 @@
+import java.util.concurrent.locks.Lock;
+
 public class Reserve implements Runnable{
     private Flight f;
     private int id;
@@ -7,17 +9,31 @@ public class Reserve implements Runnable{
         this.id = id;
     }
     @Override
-    public void run()
-    {
+    public void run() {
         //take lock
-        LockTable.acquireExclusiveLock(Database.allFlights, this);
-        LockTable.acquireExclusiveLock(Database.allPassengers, this);
+        if (Main.run_type == 1) {
+            LockTable.acquireExclusiveLock(Database.getAllFlights(), this);
+            LockTable.acquireExclusiveLock(Database.getAllPassengers(), this);
+            Passenger p = Database.getPassenger(id);
+            Seat s = f.getUnoccupiedSeat();
+            if (s != null) s.addPassenger(p);
 
-        Passenger p = Database.getPassenger(id);
-        f.addPassenger(p);
-
-        //release lock
-        LockTable.releaseExclusiveLock(Database.allFlights, this);
-        LockTable.releaseExclusiveLock(Database.allPassengers, this);
+            //release lock
+            LockTable.releaseExclusiveLock(Database.getAllFlights(), this);
+            LockTable.releaseExclusiveLock(Database.getAllPassengers(), this);
+        } else {
+            Passenger p = Database.getPassenger(id);
+            LockTable.acquireExclusiveLock(f, this);
+            Seat s = f.getUnoccupiedSeat();
+            if (s != null)
+            {
+                LockTable.acquireExclusiveLock(s, this);
+                LockTable.acquireExclusiveLock(p, this);
+                s.addPassenger(p);
+                LockTable.releaseExclusiveLock(p, this);
+                LockTable.releaseExclusiveLock(s, this);
+            }
+            LockTable.releaseExclusiveLock(f, this);
+        }
     }
 }

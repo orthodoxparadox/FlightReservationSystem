@@ -13,6 +13,25 @@ public class Seat {
         this.p = p;
     }
 
+    public boolean addPassenger(Passenger p){
+        Flight f = this.f;
+        if(p.check(f)) return false;
+        this.setOccupied(true);
+        this.setP(p);
+        p.add_flight(f, this);
+        f.occupied++;
+        return true;
+    }
+    public void removePassenger(Passenger p)
+    {
+        Flight f = this.f;
+        this.setOccupied(false);
+        this.setP(null);
+        p.remove_flight(f, this);
+        f.occupied--;
+    }
+
+
     public boolean isOccupied() {
         return isOccupied;
     }

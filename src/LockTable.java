@@ -28,11 +28,16 @@ public class LockTable {
                 table.put(o, R);
             }
         }
+        assert (!table.get(o).get(0).isEmpty());
+        assert (o != null);
+        assert (table.containsKey(o));
         while(table.get(o).get(0).get(0) != thread);
         synchronized (o)
         {
-            while(whichLock.get(o) == 2);
-            whichLock.replace(o, 1);
+            assert (o != null);
+            assert (whichLock.containsKey(o));
+            while(whichLock.get(o) ==  2);
+            whichLock.put(o, 1);
             table.get(o).get(2).add(thread);
             table.get(o).get(0).remove(thread);
         }
@@ -58,11 +63,15 @@ public class LockTable {
                 table.put(o, R);
             }
         }
+        assert (o != null);
+        assert (table.containsKey(o));
         while(table.get(o).get(1).get(0) != thread);
         synchronized (o)
         {
+            assert (o != null);
+            assert (whichLock.containsKey(o));
             while(whichLock.get(o) != 0);
-            whichLock.replace(o, 2);
+            whichLock.put(o, 2);
             assert(table.get(o).get(2).isEmpty());
             table.get(o).get(2).add(thread);
             table.get(o).get(1).remove(thread);
@@ -74,13 +83,13 @@ public class LockTable {
         table.get(o).get(2).remove(thread);
         if(table.get(o).get(2).isEmpty())
         {
-            whichLock.replace(o, 0);
+            whichLock.put(o, 0);
         }
     }
 
     public static void releaseExclusiveLock(Object o, Runnable thread)
     {
         table.get(o).get(2).remove(thread);
-        whichLock.replace(o, 0);
+        whichLock.put(o, 0);
     }
 }

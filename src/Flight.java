@@ -75,4 +75,38 @@ public class Flight {
         }
         return false;
     }
+    public void show_info()
+    {
+        System.out.println(occupied + " seats occupied out of " + capacity);
+        for(int i = 0; i < capacity; i++)
+        {
+            if(seats.get(i).isOccupied())
+            {
+                System.out.print(seats.get(i).getP().id + " ");
+            }
+        }
+        System.out.println();
+    }
+
+    public Seat findPassengerSeat(Passenger p)
+    {
+        for(int i = 0; i < capacity; i++)
+        {
+            if(seats.get(i).getP() == p)
+            {
+                return seats.get(i);
+            }
+        }
+        return null;
+    }
+
+    public Seat getUnoccupiedSeat() {
+        for(int i = 0; i < capacity; i++) {
+            if(!seats.get(i).isOccupied())
+            {
+                return seats.get(i);
+            }
+        }
+        return null;
+    }
 }
